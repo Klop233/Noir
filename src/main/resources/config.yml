@@ -1,0 +1,15 @@
+# 这是 Noir 的配置文件
+qq:
+  # 机器人的QQ号
+  botID: 3373794519
+  # QQ管理账号
+  admin:
+    - 3337913379
+  # QQ群号
+  group: 557853118
+  commands:
+    list: '#ls'
+    bind: '#绑定'
+    execute: '...'
+# 不要修改此项
+version: null

@@ -1,0 +1,13 @@
+name: Noir
+version: '${project.version}'
+main: me.klop233.Noir.Noir
+api-version: 1.13
+loadbefore: [ MiraiMC ]
+depend: [ MiraiMC ]
+authors: [ Klop233 ]
+description: A qq chat plugin depend on MiraiMC
+
+commands:
+  noir:
+    usage: "/noir help"
+    description: "Noir main command"
