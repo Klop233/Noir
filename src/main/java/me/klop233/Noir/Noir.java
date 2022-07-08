@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashSet;
+
 
 public final class Noir extends JavaPlugin {
     public static Noir INSTANCE;
@@ -28,8 +30,8 @@ public final class Noir extends JavaPlugin {
 
         loadTime = System.currentTimeMillis(); // 打时间戳
         // 读配置文件
-        saveDefaultConfig();
-        config = getConfig();
+        this.saveDefaultConfig();
+        config = this.getConfig();
         readToData();
         info("读取配置文件成功 [" + (System.currentTimeMillis() - loadTime) + "ms]");
 
@@ -39,7 +41,7 @@ public final class Noir extends JavaPlugin {
         info("事件监听器注册成功 [" + (System.currentTimeMillis() - loadTime) + "ms]");
 
         loadTime = System.currentTimeMillis();
-        Bukkit.getPluginCommand("noir").setExecutor(new Command());
+        Bukkit.getPluginCommand("noir").setExecutor(new CommandHandler());
         info("命令执行器设置成功 [" + (System.currentTimeMillis() - loadTime) + "ms]");
 
         loadTime = System.currentTimeMillis();
@@ -47,14 +49,18 @@ public final class Noir extends JavaPlugin {
         info("命令补全器设置成功 [" + (System.currentTimeMillis() - loadTime) + "ms]");
 
         loadTime = System.currentTimeMillis();
-        if (MiraiBot.getBot(Data.botsID).isExist()) {
-            if (MiraiBot.getBot(Data.botsID).getGroup(Data.groupsID) != null) {
-                init = true;
-                info("插件检测到QQ已经登录, Noir已就绪");
+        try {
+            if (MiraiBot.getBot(Data.botsID).isExist()) {
+                if (MiraiBot.getBot(Data.botsID).getGroup(Data.groupsID) != null) {
+                    init = true;
+                    info("插件检测到QQ已经登录, Noir已就绪");
+                } else {
+                    warning("QQ已登录, 但QQ群不存在, 请检查配置文件");
+                }
             } else {
-                warning("QQ已登录, 但QQ群不存在, 请检查配置文件");
+                warning("Noir 未检测到QQ登录, 稍后QQ登陆时, Noir将自动进入就绪状态");
             }
-        } else {
+        } catch (Exception e) {
             warning("Noir 未检测到QQ登录, 稍后QQ登陆时, Noir将自动进入就绪状态");
         }
         info("Mirai检查完成 [" + (System.currentTimeMillis() - loadTime) + "ms]");
@@ -66,25 +72,32 @@ public final class Noir extends JavaPlugin {
             warning("你是第一次使用Noir, 请先修改配置文件!");
             config.set("version", version);
         }
+
+
     }
 
     @Override
     public void onDisable() {
+        this.saveConfig();
         info("禁用插件, 下次再见!");
         info("作者QQ: 3337913379 | Noir by Klop233");
         INSTANCE = null;
     }
 
-    public void readToData() {
+    public static void readToData() {
         Data.botsID = config.getLong("qq.botID");
         Data.groupsID = config.getLong("qq.group");
-        Data.adminsID = config.getLongList("qq.admin");
+        // Data.adminsID = config.getLongList("qq.admin");
+        Data.adminsID = new HashSet<>(config.getLongList("qq.admin"));
         Data.list = config.getString("qq.commands.list");
         Data.execute = config.getString("qq.commands.execute");
         Data.bind = config.getString("qq.commands.bind");
     }
+
     public static void reloadNoir() {
+        INSTANCE.saveConfig();
         INSTANCE.reloadConfig();
+        config = INSTANCE.getConfig();
         config = INSTANCE.getConfig();
     }
 

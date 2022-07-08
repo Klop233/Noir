@@ -10,9 +10,15 @@ qq:
   commands:
     list: '#ls'
     bind: '#绑定'
-    execute: '...'
+    execute: '/'
   # 绑定后执行的命令, 可以是添加白名单
-  command-after-bind:
+  commands-after-bind:
     - 'wl add [player-name]'
+  # 回复方式
+  no-words:
+    - '操你妈'
+    - 'cnm'
+    - '你妈死了'
+    - 'nmsl'
 # 不要修改此项
 version: null
